@@ -17,6 +17,7 @@ describe('buildLlmInput', () => {
           title: 'Test',
           url: 'https://example.com/pr/1',
           body: 'Hello <!--comment-->world 123',
+          mergedAt: '2024-01-01T00:00:00Z',
           domainTags: ['checkout'],
           signalTags: ['pricing'],
           diffStat: { additions: 1, deletions: 0, changes: 1 },
@@ -31,12 +32,15 @@ describe('buildLlmInput', () => {
       signalCounts: { pricing: 1 },
       maxBodyChars: 5,
       maxFilesPerPr: 2,
+      timezone: 'Asia/Seoul',
     });
 
     expect(result.period).toBe('기간');
     expect(result.totalPrs).toBe(1);
     expect(result.prs[0].body).toBe('Hello…');
     expect(result.prs[0].files).toEqual(['a.ts', 'b.ts']);
+    expect(result.prs[0].mergedDate).toContain('2024. 01. 01.');
+    expect(result.prs[0].mergedDayLabel).toBe('월요일');
   });
 });
 

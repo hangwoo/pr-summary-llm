@@ -178,6 +178,7 @@ export async function run() {
     signalCounts,
     maxBodyChars: 1500,
     maxFilesPerPr: 8,
+    timezone,
   });
 
   const summaryText = await summarizeWithProvider({

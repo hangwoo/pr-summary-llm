@@ -7,6 +7,7 @@ export function buildLlmInput({
   signalCounts,
   maxBodyChars,
   maxFilesPerPr,
+  timezone,
 }: {
   periodLabel: string;
   includedPrs: any[];
@@ -14,19 +15,26 @@ export function buildLlmInput({
   signalCounts: Record<string, number>;
   maxBodyChars: number;
   maxFilesPerPr: number;
+  timezone: string;
 }) {
-  const prs = includedPrs.map(pr => ({
-    number: pr.number,
-    title: pr.title,
-    url: pr.url,
-    body: truncateText(cleanBody(pr.body), maxBodyChars),
-    domains: pr.domainTags,
-    signals: pr.signalTags,
-    diffStat: pr.diffStat,
-    files: pr.includedFiles
-      .slice(0, maxFilesPerPr)
-      .map((file: any) => file.filename),
-  }));
+  const prs = includedPrs.map(pr => {
+    const mergedAt = pr.mergedAt || '';
+    return {
+      number: pr.number,
+      title: pr.title,
+      url: pr.url,
+      body: truncateText(cleanBody(pr.body), maxBodyChars),
+      domains: pr.domainTags,
+      signals: pr.signalTags,
+      diffStat: pr.diffStat,
+      mergedAt,
+      mergedDate: formatMergedDate(mergedAt, timezone),
+      mergedDayLabel: formatMergedDayLabel(mergedAt, timezone),
+      files: pr.includedFiles
+        .slice(0, maxFilesPerPr)
+        .map((file: any) => file.filename),
+    };
+  });
 
   return {
     period: periodLabel,
@@ -94,7 +102,7 @@ export function formatPeriodLabel({
 }
 
 export function buildSummaryUserPrompt(llmInput: any) {
-  return `다음 JSON을 기반으로 요약을 작성하세요.\n요약은 반드시 아래 섹션 헤더를 포함하고, Slack mrkdwn 규칙을 지킵니다.\n\n- *코드적인 변경*\n- *비즈니스 정책 변경*\n- *큰 변화/추가점*\n\nJSON:\n${JSON.stringify(
+  return `다음 JSON을 기반으로 요약을 작성하세요.\n요약은 반드시 아래 섹션 헤더를 포함하고, Slack mrkdwn 규칙을 지킵니다.\n\n- *코드적인 변경*\n- *비즈니스 정책 변경*\n- *큰 변화/추가점*\n\n추가 규칙:\n- 각 섹션은 요일별로 그룹화하며 요일 라인은 "월요일:" 형식으로 작성\n- 요일은 JSON의 mergedDayLabel/mergedDate를 기준으로 사용\n- 요일 아래 항목은 들여쓴 "- " 불릿으로 작성\n- 요일 순서는 날짜 기준 오름차순으로 정렬\n\nJSON:\n${JSON.stringify(
     llmInput,
     null,
     2,
@@ -113,4 +121,38 @@ function truncateText(text: string, maxChars: number) {
     return text;
   }
   return `${text.slice(0, maxChars)}…`;
+}
+
+function formatMergedDate(mergedAt: string, timezone: string) {
+  if (!mergedAt) {
+    return '';
+  }
+
+  const date = new Date(mergedAt);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  return new Intl.DateTimeFormat('ko-KR', {
+    timeZone: timezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+}
+
+function formatMergedDayLabel(mergedAt: string, timezone: string) {
+  if (!mergedAt) {
+    return '';
+  }
+
+  const date = new Date(mergedAt);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  return new Intl.DateTimeFormat('ko-KR', {
+    timeZone: timezone,
+    weekday: 'long',
+  }).format(date);
 }
