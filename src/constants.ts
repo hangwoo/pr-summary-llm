@@ -1,0 +1,31 @@
+export const DEFAULT_LOOKBACK_HOURS = 168;
+export const DEFAULT_MAX_RESULTS = 200;
+export const DEFAULT_TIMEZONE = 'Asia/Seoul';
+export const DEFAULT_LLM_PROVIDER = 'openai';
+export const DEFAULT_OPENAI_MODEL = 'gpt-5.2';
+export const DEFAULT_ANTHROPIC_MODEL = 'claude-3-5-sonnet-20240620';
+export const DEFAULT_GEMINI_MODEL = 'gemini-3.0';
+
+export const SUMMARY_SYSTEM_PROMPT =
+  '당신은 PR 변경 요약을 작성합니다. 주어진 데이터만 사용하고 과장하지 마세요. 결과는 한국어로, Slack mrkdwn에 맞게 간결한 불릿 위주로 작성합니다.\n\n출력 규칙:\n- 섹션 헤더는 "*코드적인 변경*", "*비즈니스 정책 변경*", "*큰 변화/추가점*" 형식으로 한 줄씩 작성\n- 각 섹션 아래 항목은 "- " 불릿으로 작성\n- 항목이 없으면 해당 섹션에 "- 해당 없음"만 작성\n- 섹션 사이에는 빈 줄 1줄\n\n주의: 불확실한 추정은 하지 말고, 근거가 부족하면 생략합니다.';
+
+export const DOMAIN_LABELS: Record<string, string> = {
+  checkout: '결제/주문',
+  promotion: '프로모션',
+  content: '콘텐츠',
+  auth: '인증/가입',
+  settings: '설정/프로필',
+  notification: '알림',
+  analytics: '분석/측정',
+  'feature-flag': '기능 플래그',
+  i18n: '카피/번역',
+};
+
+export const SIGNAL_LABELS: Record<string, string> = {
+  pricing: '가격/할인',
+  payment: '결제',
+  policy: '정책/약관',
+  experiment: '실험/롤아웃',
+  growth: '성장/전환',
+  notification: '알림',
+};

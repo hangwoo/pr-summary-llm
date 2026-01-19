@@ -1,0 +1,56 @@
+name: "PR Summary LLM"
+description: "Summarize merged PRs with LLMs and post to Slack."
+inputs:
+  github-token:
+    description: "GitHub token for API calls"
+    required: true
+  pr-summary-slack-webhook-url:
+    description: "PR Summary Slack Incoming Webhook URL"
+    required: true
+  llm-provider:
+    description: "LLM provider (openai|anthropic|gemini)"
+    required: false
+    default: "openai"
+  openai-api-key:
+    description: "OpenAI API key"
+    required: false
+  anthropic-api-key:
+    description: "Anthropic API key"
+    required: false
+  gemini-api-key:
+    description: "Gemini API key"
+    required: false
+  openai-model:
+    description: "OpenAI model name"
+    required: false
+    default: "gpt-5.2"
+  anthropic-model:
+    description: "Anthropic model name"
+    required: false
+    default: "claude-3-5-sonnet-20240620"
+  gemini-model:
+    description: "Gemini model name"
+    required: false
+    default: "gemini-3.0"
+  lookback-hours:
+    description: "Lookback period in hours"
+    required: false
+    default: "168"
+  timezone:
+    description: "Timezone for reporting"
+    required: false
+    default: "Asia/Seoul"
+  max-results:
+    description: "Max PRs to fetch"
+    required: false
+    default: "200"
+  config-path:
+    description: "Config file path"
+    required: false
+    default: "scripts/pr-summary.config.json"
+runs:
+  using: "node20"
+  main: "dist/index.js"
+branding:
+  icon: "activity"
+  color: "blue"
