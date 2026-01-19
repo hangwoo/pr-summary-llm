@@ -42,6 +42,53 @@ jobs:
           config-path: scripts/pr-summary.config.json
 ```
 
+## 권한
+
+```yaml
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+```
+
+## Provider별 설정 예시
+
+### OpenAI
+
+```yaml
+- uses: hangwoo/pr-summary-llm@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    pr-summary-slack-webhook-url: ${{ secrets.PR_SUMMARY_SLACK_WEBHOOK_URL }}
+    openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+    llm-provider: openai
+    openai-model: gpt-5.2
+```
+
+### Anthropic
+
+```yaml
+- uses: hangwoo/pr-summary-llm@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    pr-summary-slack-webhook-url: ${{ secrets.PR_SUMMARY_SLACK_WEBHOOK_URL }}
+    anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+    llm-provider: anthropic
+    anthropic-model: claude-3-5-sonnet-20240620
+```
+
+### Gemini
+
+```yaml
+- uses: hangwoo/pr-summary-llm@v1
+  with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    pr-summary-slack-webhook-url: ${{ secrets.PR_SUMMARY_SLACK_WEBHOOK_URL }}
+    gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
+    llm-provider: gemini
+    gemini-model: gemini-3.0
+```
+
 ## 입력값
 
 - `github-token` (required): GitHub API 호출용 토큰
@@ -76,6 +123,25 @@ jobs:
   "topPrCount": 8
 }
 ```
+
+## 출력 예시 (Slack)
+
+```
+*코드적인 변경*
+- PR 요약 자동화 개선: 로컬 액션 도입 및 요약 포맷 표준화 (#123)
+- 알림 설정 플로우 리뉴얼 및 권한 UI 추가 (#124)
+
+*비즈니스 정책 변경*
+- 신규 고객 첫 구매 적립금 기본값: 3000원 → 1000원
+
+*큰 변화/추가점*
+- 푸시 알림 설정/권한 플로우 전반 개편
+```
+
+## 버전 정책
+
+- `v1` 태그는 호환성 유지 범위에서 최신 릴리스를 가리킵니다.
+- 변경 후에는 `dist/`를 업데이트하고 `v1.x.y` → `v1` 순으로 태그를 갱신합니다.
 
 ## 필요 시크릿
 
